@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 예시: 이름과 소개를 본인 것으로 바꾸세요 -->
+  <title>파라 | 개인 웹사이트</title>
+  <meta name="description" content="마크다운과 웹을 배우고 있는 파라의 개인 웹사이트입니다.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #EEF1F6;
+      --surface: #FFFFFF;
+      --ink: #1C2333;
+      --muted: #5B6478;
+      --line: #D5DBE6;
+      --accent: #2F5BEA;
+      --mark: #9AA6C2;
+      --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+      color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121826;
+        --surface: #1A2233;
+        --ink: #E6EAF2;
+        --muted: #98A2B8;
+        --line: #2A3448;
+        --accent: #7C9BFF;
+        --mark: #4E5B78;
+        color-scheme: dark;
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 1.0625rem;
+      line-height: 1.75;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-underline-offset: 0.2em; }
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    .page {
+      max-width: 44rem;
+      margin: 0 auto;
+      padding: 0 1.5rem 5rem;
+    }
+
+    /* 상단 메뉴: 파일 탭처럼 */
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 0.875rem;
+    }
+    .top .file { color: var(--muted); }
+    .top nav { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+    .top nav a { color: var(--ink); text-decoration: none; }
+    .top nav a:hover { color: var(--accent); }
+
+    /* 마크다운 기호 */
+    .md {
+      font-family: var(--mono);
+      font-weight: 400;
+      color: var(--mark);
+      margin-right: 0.35em;
+    }
+
+    /* 히어로 */
+    .hero {
+      padding: 4.5rem 0 3.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .hero h1 {
+      font-size: clamp(2.25rem, 6vw, 3rem);
+      line-height: 1.25;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 1.25rem;
+    }
+    .hero h1 .md { font-size: 0.6em; vertical-align: 0.25em; }
+    .hero .lead {
+      font-size: 1.1875rem;
+      color: var(--muted);
+      margin: 0;
+      max-width: 26rem;
+    }
+
+    /* 픽셀 그림: 모눈종이 카드 */
+    .art { display: grid; justify-items: center; gap: 1.1rem; }
+    .pixel-art {
+      --cell: 0.3125rem;
+      --paper: #E4F3F2;
+      --rule: rgba(110, 90, 60, 0.18);
+      display: grid;
+      grid-template-columns: repeat(48, var(--cell));
+      grid-auto-rows: var(--cell);
+      padding: calc(var(--cell) * 2);
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(var(--rule) 1px, transparent 1px),
+        linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+      background-size: var(--cell) var(--cell);
+      background-position: calc(var(--cell) * 2) calc(var(--cell) * 2);
+      border: 1px solid rgba(110, 90, 60, 0.25);
+      transition: background-color 1.2s ease-in-out;
+    }
+    .pixel-art.is-butterfly { --paper: #F3E6CF; }
+    .pixel-art span { background-color: transparent; }
+
+    /* 픽셀 스위치: 손잡이가 칸 단위로 움직여요 */
+    .switch {
+      --dot: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      font-size: 0.9375rem;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+    }
+    .switch input {
+      --knob-x: var(--dot);
+      --knob: #7BC24A;
+      --knob-light: #B6E07A;
+      --knob-dark: #4E8F33;
+      appearance: none;
+      -webkit-appearance: none;
+      flex: none;
+      margin: var(--dot);
+      inline-size: calc(14 * var(--dot));
+      block-size: calc(7 * var(--dot));
+      background-color: var(--line);
+      background-image:
+        linear-gradient(var(--knob-light) 0 0),
+        linear-gradient(var(--knob-dark) 0 0),
+        linear-gradient(var(--knob) 0 0);
+      background-size:
+        var(--dot) var(--dot),
+        calc(5 * var(--dot)) var(--dot),
+        calc(5 * var(--dot)) calc(5 * var(--dot));
+      background-position:
+        calc(var(--knob-x) + var(--dot)) calc(2 * var(--dot)),
+        var(--knob-x) calc(5 * var(--dot)),
+        var(--knob-x) var(--dot);
+      background-repeat: no-repeat;
+      box-shadow:
+        0 calc(-1 * var(--dot)) var(--ink),
+        0 var(--dot) var(--ink),
+        calc(-1 * var(--dot)) 0 var(--ink),
+        var(--dot) 0 var(--ink);
+      cursor: pointer;
+      transition: background-position 0.21s steps(7, end);
+    }
+    .switch input:checked {
+      --knob-x: calc(8 * var(--dot));
+      --knob: #3459D6;
+      --knob-light: #A9C4FF;
+      --knob-dark: #1F2F6B;
+    }
+    .switch input:focus-visible { outline: var(--dot) solid var(--accent); outline-offset: calc(3 * var(--dot)); }
+    .switch:has(input:not(:checked)) [data-side="larva"],
+    .switch:has(input:checked) [data-side="wing"] { color: var(--ink); font-weight: 500; }
+
+    /* 섹션 */
+    section { padding: 2.5rem 0; border-top: 1px solid var(--line); }
+    section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 0 0 1.25rem;
+    }
+    section p { margin: 0 0 1rem; max-width: 38rem; }
+
+    /* 프로젝트: 마크다운 목록처럼 */
+    .projects { list-style: none; margin: 0; padding: 0; }
+    .projects li {
+      display: grid;
+      grid-template-columns: 1.5rem 1fr;
+      padding: 1rem 0;
+    }
+    .projects li + li { border-top: 1px dashed var(--line); }
+    .projects .md { margin: 0; line-height: 1.75; }
+    .projects h3 { font-size: 1.125rem; margin: 0; font-weight: 700; }
+    .projects p { margin: 0.25rem 0 0.5rem; color: var(--muted); }
+    .projects .links { font-size: 0.9375rem; }
+
+    /* 기술 스택: 인라인 코드처럼 */
+    .stack { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+    .stack li {
+      font-family: var(--mono);
+      font-size: 0.9375rem;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 0.15rem 0.6rem;
+    }
+    .stack-note { color: var(--muted); font-size: 0.9375rem; }
+
+    /* 연락처 */
+    .contact { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1.5rem; }
+    .contact dt { color: var(--muted); }
+    .contact dd { margin: 0; overflow-wrap: anywhere; }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding-top: 1.5rem;
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 34rem) {
+      .top { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+      .hero { padding: 3rem 0 2.5rem; grid-template-columns: 1fr; gap: 2rem; }
+      .art { justify-items: start; }
+      .contact { grid-template-columns: 1fr; gap: 0.1rem; }
+      .contact dd { margin-bottom: 0.75rem; }
+    }
+    @media (max-width: 22rem) {
+      .pixel-art { --cell: 0.25rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .pixel-art, .switch input { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <header class="top">
+      <span class="file">index.md</span>
+      <nav aria-label="페이지 메뉴">
+        <a href="#about">소개</a>
+        <a href="#projects">프로젝트</a>
+        <a href="#stack">기술</a>
+        <a href="#contact">연락처</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- 예시: 이름과 한 줄 소개를 바꾸세요 -->
+      <div class="hero">
+        <div>
+          <h1><span class="md" aria-hidden="true">#</span>안녕하세요, 파라입니다</h1>
+          <p class="lead">마크다운 한 줄에서 시작해 웹페이지를 만드는 법을 배우고 있어요.</p>
+        </div>
+        <div class="art">
+          <div class="pixel-art" id="pixel-art" role="img" aria-label="하늘색 모눈종이 위에 픽셀로 그린 초록 애벌레"></div>
+          <label class="switch">
+            <span data-side="larva" aria-hidden="true">애벌레</span>
+            <input type="checkbox" role="switch" id="morph" aria-label="나비로 바꾸기">
+            <span data-side="wing" aria-hidden="true">나비</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 예시: 자기소개 -->
+      <section id="about">
+        <h2><span class="md" aria-hidden="true">##</span>소개</h2>
+        <p>GitHub 계정을 만들고 마크다운을 연습하면서 코딩을 시작했어요. 직접 쓴 글과 코드가 인터넷 주소 하나로 열리는 게 신기해서, 이 페이지도 그렇게 만들었습니다.</p>
+        <p>요즘은 HTML과 CSS로 페이지 구조를 잡는 연습을 하고 있고, 다음 목표는 JavaScript로 움직이는 화면을 만드는 거예요.</p>
+      </section>
+
+      <!-- 예시: 프로젝트 -->
+      <section id="projects">
+        <h2><span class="md" aria-hidden="true">##</span>프로젝트</h2>
+        <ul class="projects">
+          <li>
+            <span class="md" aria-hidden="true">-</span>
+            <div>
+              <h3>para1</h3>
+              <p>제목, 목록 같은 마크다운 문법을 연습하고 GitHub에 커밋해 본 첫 저장소예요.</p>
+              <span class="links"><a href="https://github.com/a01085109760-del/para1">저장소 보기</a></span>
+            </div>
+          </li>
+          <li>
+            <span class="md" aria-hidden="true">-</span>
+            <div>
+              <h3>개인 웹사이트</h3>
+              <p>지금 보고 계신 페이지예요. HTML 파일 하나로 만들고 GitHub Pages로 배포했어요.</p>
+              <span class="links"><a href="https://github.com/a01085109760-del/para1/blob/main/index.html">코드 보기</a></span>
+            </div>
+          </li>
+          <li>
+            <span class="md" aria-hidden="true">-</span>
+            <div>
+              <h3>할 일 목록 (준비 중)</h3>
+              <p>할 일을 추가하고 체크할 수 있는 작은 웹 앱을 만들 계획이에요.</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- 예시: 기술 스택 -->
+      <section id="stack">
+        <h2><span class="md" aria-hidden="true">##</span>기술</h2>
+        <ul class="stack">
+          <li>Markdown</li>
+          <li>HTML</li>
+          <li>CSS</li>
+          <li>Git</li>
+          <li>GitHub</li>
+        </ul>
+        <p class="stack-note">지금 배우는 중: JavaScript</p>
+      </section>
+
+      <!-- 예시: 연락처 (공개해도 되는 정보만 넣으세요) -->
+      <section id="contact">
+        <h2><span class="md" aria-hidden="true">##</span>연락처</h2>
+        <dl class="contact">
+          <dt>이메일</dt>
+          <dd><a href="mailto:hello@example.com">hello@example.com</a></dd>
+          <dt>GitHub</dt>
+          <dd><a href="https://github.com/a01085109760-del">github.com/a01085109760-del</a></dd>
+          <dt>Instagram</dt>
+          <dd><a href="https://instagram.com/">@your_id</a></dd>
+        </dl>
+      </section>
+    </main>
+
+    <footer>
+      이 페이지는 GitHub Pages로 배포했어요.
+    </footer>
+
+  </div>
+  <script>
+    (function () {
+      // 48 x 48 픽셀 그림. 글자 하나가 한 칸이에요. "."은 빈칸.
+      var colors = {
+        k: "#2A1E2E",
+        K: "#2A1E2E",
+        g: "#7BC24A",
+        l: "#B6E07A",
+        d: "#4E8F33",
+        y: "#F5C842",
+        w: "#FFF8E6",
+        L: "#2A1E2E",
+        O: "#FFB25C",
+        o: "#F08A3C",
+        r: "#C25A2A",
+        n: "#1F2F6B",
+        b: "#3459D6",
+        B: "#5E86F0",
+        c: "#A9C4FF",
+        M: "#5A4466"
+      };
+      var larva = [
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "....................................r........r..",
+        ".....................................k......k...",
+        "......................................k....k....",
+        "......................................kkkkk.....",
+        "...........................kkkk.kkk..kOOOOk.....",
+        ".......k...............kkkklllgklllkkOOOOook....",
+        ".....kklkk.........kkkkllldllygdllggOOOOooook...",
+        "....klllggkkkkkkkkklllllygddggddgyggOOooowKok...",
+        "...klllyggdllglllllllddgggddggddgggOOoooooKork..",
+        "...kllgggddygddlyddgydddggddggddggggoooooorrk...",
+        "...kggggdddggddggddggdddggddgwddgwddooooorrrk...",
+        "...kgggwdddggddggdddggddwddddddgdddkkoorrrrk....",
+        "....kggdddgggddggddgwdddddkkkLkkkLk..krrrrk.....",
+        ".....kkdkggwddggwdddddkkLk............kkkk......",
+        ".......L.kdddkgdddkkLk..........................",
+        "..........kLk.kkLk..............................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................"
+      ];
+      var butterfly = [
+        "................................................",
+        "................................................",
+        "................................................",
+        ".................K............K.................",
+        ".................KK..........KK.................",
+        ".......kkkkkk.....k..........k.....kkkkkk.......",
+        ".....kknnnwnnkk...k..........k...kknnnwnnkk.....",
+        "....knnwnnbnnnnkk..k........k..kknnwnbnnnnwk....",
+        "...kwnnbbbbbbbbnnk..k......k..knnbbbbbbbbnnnk...",
+        "...knnbbbBBBBBbbbnkkk......kkknbbbBBBBBbbbnwk...",
+        "...knbbBBBBBBBBBbbnwkk....kknnbbBBBBBBBBBbbnk...",
+        "..knnbbBBBBccBBBBbbnnkkkkkknnbbBBBBccBBBBbbnwk..",
+        "..knnbbBBccccccBBBbbnkkKKkknbbBBBccccccBBbbnnk..",
+        "...knbbBBcccccccBBBbbnkKKknbbBBBcccccccBBbbnk...",
+        "...knbbBBccccccccBBBbwnKKnnbBBBccccccccBBbbnk...",
+        "...kwnbBBBccccccccBBbbnMMwbbBBccccccccBBBbnnk...",
+        "....knbbBBBcccccccBBbbwKKnbbBBcccccccBBBbbnk....",
+        ".....knbbBBBccccccBBbbnKKnbbBBccccccBBBbbnk.....",
+        ".....knnbbBBBBccBBBBbbnMMnbbBBBBccBBBBbbnnk.....",
+        "......knnbbBBBBBBBBBbbnKKnbbBBBBBBBBBbbnnk......",
+        ".......kknbbbBBBBBbbbnnKKnnbbbBBBBBbbbnkk.......",
+        ".........knnbbbbbbbbnwnMMnnnbbbbbbbbnnk.........",
+        "..........kknnnnbnwnnnkKKknnnnnbwnnnkk..........",
+        "............knnwbbbnnnkKKknnnbbbnnnk............",
+        "...........knbbbbbbbbnkMMknbbbbbbbbnk...........",
+        "..........knbbBBBBBBbbnKKnbbBBBBBBbbnk..........",
+        ".........knbbBBBcBBBbbnKKnbbBBBcBBBbbnk.........",
+        "........knbbBBcccccBBbnMMnbBBcccccBBbbnk........",
+        "........knbBBccccccBBbnKKnbBBccccccBBbnk........",
+        ".......knbbBcccyyycBbbnKKnbbBcyyycccBbbnk.......",
+        ".......kwbBBcccyKyBBbnkMMknbBByKycccBBbnk.......",
+        ".......knbBBcccyyyBbbnkKKknbbByyycccBBbnk.......",
+        ".......knbbBBBcBBBbbnkkKKkknbbBBBcBBBbbnk.......",
+        ".......knbbBBBBBBbbnk.kMMk.knbbBBBBBBbbnk.......",
+        "........knbbbbbbbbnk..kKKk..knbbbbbbbbnk........",
+        "........knnnbbbnnnk...kKKk...knnnbbbnnnk........",
+        ".........kkwnnnnkk....kKKk....kkwnnnnkk.........",
+        "...........kkkkk.......kk.......kkkkk...........",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................",
+        "................................................"
+      ];
+      var SIZE = 48;
+      var CENTER = 24;   // 나비 몸통이 있는 가운데 줄
+
+      var art = document.getElementById("pixel-art");
+      var toggle = document.getElementById("morph");
+      var cells = [];
+      var level = [];    // 2x2 칸 안의 위치로 정한 변신 순서(0~3)
+      var ORDER = [[0, 3], [2, 1]]; // [y%2][x%2]
+
+      for (var i = 0; i < SIZE * SIZE; i++) {
+        var x = i % SIZE, y = Math.floor(i / SIZE);
+        var cell = document.createElement("span");
+        art.appendChild(cell);
+        cells.push(cell);
+        level.push(ORDER[y % 2][x % 2]);
+      }
+
+      // 애벌레: 몸이 긴 물결처럼 꿈틀거려요. 세로줄마다 위아래로 최대 1칸 밀어요.
+      function larvaAt(x, y, t) {
+        var lift = Math.round(Math.sin(x * 0.16 - t * 3) * 1.1);
+        var sy = y + lift;
+        return sy >= 0 && sy < SIZE ? larva[sy][x] : ".";
+      }
+      // 나비: 날개를 몸통 쪽으로 좁혔다 폈다 하며 날갯짓해요.
+      function butterflyAt(x, y, wing) {
+        if (x === 23 || x === 24) return butterfly[y][x];
+        var dx = x + 0.5 - CENTER;
+        var sx = Math.floor(CENTER + dx / wing);
+        if (sx < 0 || sx >= SIZE) return ".";
+        if ((dx < 0 && sx > 22) || (dx > 0 && sx < 25)) return ".";
+        return butterfly[y][sx];
+      }
+
+      var shown = 0;       // 나비가 드러난 단계 수(0이면 애벌레, 4면 나비)
+      var target = 0;
+      var timers = [];
+      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      function paint(t) {
+        var wing = reduceMotion.matches ? 1 : 0.62 + 0.38 * Math.abs(Math.cos(t * 3.2));
+        wing = Math.round(wing * 8) / 8;
+        var tt = reduceMotion.matches ? 0 : t;
+        for (var i = 0; i < SIZE * SIZE; i++) {
+          var x = i % SIZE, y = Math.floor(i / SIZE);
+          var ch = level[i] < shown ? butterflyAt(x, y, wing) : larvaAt(x, y, tt);
+          var color = colors[ch] || "transparent";
+          if (cells[i].__c !== color) { cells[i].style.backgroundColor = color; cells[i].__c = color; }
+        }
+      }
+
+      // 원본처럼 네 단계로 나눠 0.25초 간격으로 바꿔요.
+      toggle.addEventListener("change", function () {
+        timers.forEach(clearTimeout);
+        timers = [];
+        target = toggle.checked ? 4 : 0;
+        art.classList.toggle("is-butterfly", toggle.checked);
+        art.setAttribute("aria-label", toggle.checked
+          ? "베이지색 모눈종이 위에 픽셀로 그린 파란 나비"
+          : "하늘색 모눈종이 위에 픽셀로 그린 초록 애벌레");
+        if (reduceMotion.matches) { shown = target; return; }
+        var steps = Math.abs(target - shown);
+        for (var k = 1; k <= steps; k++) {
+          timers.push(setTimeout(function () {
+            shown += target > shown ? 1 : -1;
+          }, k * 250));
+        }
+      });
+
+      var last = -1;
+      function tick(time) {
+        var frame = Math.floor(time / 90);   // 픽셀 그림답게 뚝뚝 끊기게
+        if (frame !== last) { last = frame; paint(time / 1000); }
+        requestAnimationFrame(tick);
+      }
+      paint(0);
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>
